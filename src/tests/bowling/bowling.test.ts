@@ -2,15 +2,25 @@ class BowlingGame {
 	puntuacion: number;
 	bonusExtra: number;
 
-	constructor() {
-		this.puntuacion = 0;
-		this.bonusExtra = 0;
-	}
+	constructor() {}
 
 	bowling(lanzamientos: string[][]) {
+		this.puntuacion = 0;
+		this.bonusExtra = 0;
+
 		lanzamientos.forEach((lanzamiento) => {
 			this.sumarPuntuacionPorTurno(lanzamiento);
 			this.actualizarBonusExtraPorLanzamientoActual(lanzamiento);
+		});
+		return this.puntuacion;
+	}
+
+	lanzamientosExtra(lanzamientos: string[][]) {
+		this.puntuacion = 0;
+		this.bonusExtra = 0;
+
+		lanzamientos.forEach((lanzamiento) => {
+			this.sumarPuntuacionPorTurno(lanzamiento);
 		});
 		return this.puntuacion;
 	}
@@ -19,9 +29,10 @@ class BowlingGame {
 		const sumaPuntosAcumulacionBonus = this.acumularPuntosPorBonusTiradasAnteriores(tiro[0], tiro[1]);
 		const puntuacionParcial = this.obtenerPuntuacionParcialLanzamiento(tiro[0], tiro[1]);
 
-		this.puntuacion += puntuacionParcial + sumaPuntosAcumulacionBonus;
+		const puntuacionPasada = this.puntuacion;
+		this.puntuacion = puntuacionPasada + puntuacionParcial + sumaPuntosAcumulacionBonus;
 		/***
-	 	console.log(
+		console.log(
 			'sumarPuntuacionPorTurno: ->' +
 				tiro[0] +
 				',' +
@@ -29,11 +40,14 @@ class BowlingGame {
 				',' +
 				this.puntuacion +
 				' = ' +
+				puntuacionPasada +
+				'+' +
 				puntuacionParcial +
 				'+' +
 				sumaPuntosAcumulacionBonus
 		);
-		***/
+	
+		 ***/
 	}
 
 	actualizarBonusExtraPorLanzamientoActual(tiro: string[]) {
@@ -186,11 +200,59 @@ describe('El juego de Bowling', () => {
 			['X', '-'],
 			['X', '-'],
 			['X', '-'],
-			['X', '-'],
-			['X', '-'],
 		];
-		const result = juego.bowling(lanzamientos);
+		const extraBonus: string[][] = [
+			['X', '-'],
+			['X', '-'],
+
+			//bonus por los ultimos strike
+		];
+		const result = juego.bowling(lanzamientos) + juego.lanzamientosExtra(extraBonus);
 		const expected = 300;
+
+		expect(result).toBe(expected);
+	});
+
+	it('20 lanzamientos, 10 spare', () => {
+		const lanzamientos: string[][] = [
+			['5', '/'],
+			['5', '/'],
+			['5', '/'],
+			['5', '/'],
+			['5', '/'],
+			['5', '/'],
+			['5', '/'],
+			['5', '/'],
+			['5', '/'],
+			['5', '/'],
+		];
+		const extraBonus: string[][] = [
+			['5', '-'], //bonus por el ultimo spare
+		];
+		const result = juego.bowling(lanzamientos) + juego.lanzamientosExtra(extraBonus);
+		const expected = 150;
+
+		expect(result).toBe(expected);
+	});
+
+	it('20 lanzamientos, 10 spare', () => {
+		const lanzamientos: string[][] = [
+			['8', '/'],
+			['8', '/'],
+			['8', '/'],
+			['8', '/'],
+			['8', '/'],
+			['8', '/'],
+			['8', '/'],
+			['8', '/'],
+			['8', '/'],
+			['8', '/'],
+		];
+		const extraBonus: string[][] = [
+			['8', '-'], //bonus por el ultimo spare
+		];
+		const result = juego.bowling(lanzamientos) + juego.lanzamientosExtra(extraBonus);
+		const expected = 180;
 
 		expect(result).toBe(expected);
 	});
