@@ -10,57 +10,10 @@ class BowlingGame {
 	bowling(lanzamientos: string[][]) {
 		for (let i = 0; i < lanzamientos.length; i++) {
 			this.sumarPuntuacionPorTurno(lanzamientos[i]);
-			this.computarPorBonusExtraLanzamientoActual(lanzamientos[i]);
+			this.actualizarBonusExtraPorLanzamientoActual(lanzamientos[i]);
 		}
 
 		return this.puntuacion;
-	}
-
-	hayBonusPorTiradaAnterior(): boolean {
-		return this.bonusExtra > 0;
-	}
-
-	decrementarBonusExtra(unidades: number) {
-		this.bonusExtra -= unidades;
-	}
-
-	esTiradaStrike(lanzamiento: string): boolean {
-		return lanzamiento === 'X';
-	}
-
-	esTiradaSpare(lanzamiento: string): boolean {
-		return lanzamiento === '/';
-	}
-
-	acumularPuntosPorBonusTiradasAnteriores(primerTiro: string, segundoTiro: string): number {
-		let sumaPuntosAcumulacionBonus = 0;
-		if (this.hayBonusPorTiradaAnterior()) {
-			sumaPuntosAcumulacionBonus += this.obtenerCorrespondenciaTiradaPuntos(primerTiro);
-			this.decrementarBonusExtra(1);
-		}
-		if (!this.esTiradaStrike(primerTiro) && this.hayBonusPorTiradaAnterior()) {
-			sumaPuntosAcumulacionBonus += this.obtenerCorrespondenciaTiradaPuntos(segundoTiro);
-			this.decrementarBonusExtra(1);
-		}
-		return sumaPuntosAcumulacionBonus;
-	}
-
-	obtenerPuntuacionParcialLanzamiento(primerTiro: string, segundoTiro: string): number {
-		if (this.esTiradaStrike(primerTiro) || this.esTiradaSpare(segundoTiro)) {
-			return 10;
-		} else {
-			const puntuacionPrimerTiro = this.obtenerCorrespondenciaTiradaPuntos(primerTiro);
-			const puntuacionSegundoTiro = this.obtenerCorrespondenciaTiradaPuntos(segundoTiro);
-			return puntuacionPrimerTiro + puntuacionSegundoTiro;
-		}
-	}
-
-	computarPorBonusExtraLanzamientoActual(tiro: string[]) {
-		if (this.esTiradaStrike(tiro[0])) {
-			this.bonusExtra += 2;
-		} else if (this.esTiradaSpare(tiro[1])) {
-			this.bonusExtra += 1;
-		}
 	}
 
 	sumarPuntuacionPorTurno(tiro: string[]) {
@@ -82,6 +35,52 @@ class BowlingGame {
 				sumaPuntosAcumulacionBonus
 		);
 		***/
+	}
+
+	actualizarBonusExtraPorLanzamientoActual(tiro: string[]) {
+		if (this.esTiradaStrike(tiro[0])) {
+			this.bonusExtra += 2;
+		} else if (this.esTiradaSpare(tiro[1])) {
+			this.bonusExtra += 1;
+		}
+	}
+
+	acumularPuntosPorBonusTiradasAnteriores(primerTiro: string, segundoTiro: string): number {
+		let sumaPuntosAcumulacionBonus = 0;
+		if (this.hayBonusPorTiradaAnterior()) {
+			sumaPuntosAcumulacionBonus += this.obtenerCorrespondenciaTiradaPuntos(primerTiro);
+			this.decrementarBonusExtra(1);
+		}
+		if (!this.esTiradaStrike(primerTiro) && this.hayBonusPorTiradaAnterior()) {
+			sumaPuntosAcumulacionBonus += this.obtenerCorrespondenciaTiradaPuntos(segundoTiro);
+			this.decrementarBonusExtra(1);
+		}
+		return sumaPuntosAcumulacionBonus;
+	}
+
+	obtenerPuntuacionParcialLanzamiento(primerTiro: string, segundoTiro: string): number {
+		if (this.esTiradaStrike(primerTiro) || this.esTiradaSpare(segundoTiro)) {
+			return 10;
+		}
+		const puntuacionPrimerTiro = this.obtenerCorrespondenciaTiradaPuntos(primerTiro);
+		const puntuacionSegundoTiro = this.obtenerCorrespondenciaTiradaPuntos(segundoTiro);
+		return puntuacionPrimerTiro + puntuacionSegundoTiro;
+	}
+
+	hayBonusPorTiradaAnterior(): boolean {
+		return this.bonusExtra > 0;
+	}
+
+	decrementarBonusExtra(unidades: number) {
+		this.bonusExtra -= unidades;
+	}
+
+	esTiradaStrike(lanzamiento: string): boolean {
+		return lanzamiento === 'X';
+	}
+
+	esTiradaSpare(lanzamiento: string): boolean {
+		return lanzamiento === '/';
 	}
 
 	obtenerCorrespondenciaTiradaPuntos(tiro: string) {
