@@ -8,11 +8,10 @@ class BowlingGame {
 	}
 
 	bowling(lanzamientos: string[][]) {
-		for (let i = 0; i < lanzamientos.length; i++) {
-			this.sumarPuntuacionPorTurno(lanzamientos[i]);
-			this.actualizarBonusExtraPorLanzamientoActual(lanzamientos[i]);
-		}
-
+		lanzamientos.forEach((lanzamiento) => {
+			this.sumarPuntuacionPorTurno(lanzamiento);
+			this.actualizarBonusExtraPorLanzamientoActual(lanzamiento);
+		});
 		return this.puntuacion;
 	}
 
