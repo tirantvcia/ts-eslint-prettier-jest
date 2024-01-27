@@ -29,8 +29,7 @@ class BowlingGame {
 		const sumaPuntosAcumulacionBonus = this.acumularPuntosPorBonusTiradasAnteriores(tiro[0], tiro[1]);
 		const puntuacionParcial = this.obtenerPuntuacionParcialLanzamiento(tiro[0], tiro[1]);
 
-		const puntuacionPasada = this.puntuacion;
-		this.puntuacion = puntuacionPasada + puntuacionParcial + sumaPuntosAcumulacionBonus;
+		this.puntuacion += puntuacionParcial + sumaPuntosAcumulacionBonus;
 		/***
 		console.log(
 			'sumarPuntuacionPorTurno: ->' +
@@ -60,12 +59,21 @@ class BowlingGame {
 
 	acumularPuntosPorBonusTiradasAnteriores(primerTiro: string, segundoTiro: string): number {
 		let sumaPuntosAcumulacionBonus = 0;
-		if (this.hayBonusPorTiradaAnterior()) {
-			sumaPuntosAcumulacionBonus += this.obtenerCorrespondenciaTiradaPuntos(primerTiro);
-			this.decrementarBonusExtra(1);
+
+		sumaPuntosAcumulacionBonus = this.calcularPuntosPorBonus(primerTiro);
+		if (this.esTiradaStrike(primerTiro)) {
+			sumaPuntosAcumulacionBonus += this.calcularPuntosPorBonus(primerTiro);
 		}
-		if (!this.esTiradaStrike(primerTiro) && this.hayBonusPorTiradaAnterior()) {
-			sumaPuntosAcumulacionBonus += this.obtenerCorrespondenciaTiradaPuntos(segundoTiro);
+		if (!this.esTiradaStrike(primerTiro)) {
+			sumaPuntosAcumulacionBonus += this.calcularPuntosPorBonus(segundoTiro);
+		}
+		return sumaPuntosAcumulacionBonus;
+	}
+
+	calcularPuntosPorBonus(tiro: string) {
+		let sumaPuntosAcumulacionBonus = 0;
+		if (this.hayBonusPorTiradaAnterior()) {
+			sumaPuntosAcumulacionBonus = this.obtenerCorrespondenciaTiradaPuntos(tiro);
 			this.decrementarBonusExtra(1);
 		}
 		return sumaPuntosAcumulacionBonus;
