@@ -4,13 +4,13 @@ export class BowlingGame {
 
 	constructor() {}
 
-	bowling(lanzamientos: string[][]) {
+	bowling(turnos: string[][]) {
 		this.puntuacion = 0;
 		this.bonusExtra = 0;
 
-		lanzamientos.forEach((lanzamiento) => {
-			this.sumarPuntuacionPorTurno(lanzamiento);
-			this.actualizarBonusExtraPorLanzamientoActual(lanzamiento);
+		turnos.forEach((turno) => {
+			this.actualizarPuntuacionPorTurno(turno);
+			this.actualizarBonusExtraPorTurno(turno);
 		});
 		return this.puntuacion;
 	}
@@ -20,22 +20,22 @@ export class BowlingGame {
 		this.bonusExtra = 0;
 
 		lanzamientos.forEach((lanzamiento) => {
-			this.sumarPuntuacionPorTurno(lanzamiento);
+			this.actualizarPuntuacionPorTurno(lanzamiento);
 		});
 		return this.puntuacion;
 	}
 
-	sumarPuntuacionPorTurno(tiro: string[]) {
-		const sumaPuntosAcumulacionBonus = this.acumularPuntosPorBonusTiradasAnteriores(tiro[0], tiro[1]);
-		const puntuacionParcial = this.obtenerPuntuacionParcialLanzamiento(tiro[0], tiro[1]);
+	actualizarPuntuacionPorTurno(tiros: string[]) {
+		const sumaPuntosAcumulacionBonus = this.acumularPuntosPorBonusTiradasAnteriores(tiros[0], tiros[1]);
+		const puntuacionParcial = this.obtenerPuntuacionParcialLanzamiento(tiros[0], tiros[1]);
 
 		this.puntuacion += puntuacionParcial + sumaPuntosAcumulacionBonus;
 		/***
 		console.log(
-			'sumarPuntuacionPorTurno: ->' +
-				tiro[0] +
+			'actualizarPuntuacionPorTurno: ->' +
+				tiros[0] +
 				',' +
-				tiro[1] +
+				tiros[1] +
 				',' +
 				this.puntuacion +
 				' = ' +
@@ -49,10 +49,10 @@ export class BowlingGame {
 		 ***/
 	}
 
-	actualizarBonusExtraPorLanzamientoActual(tiro: string[]) {
-		if (this.esTiradaStrike(tiro[0])) {
+	actualizarBonusExtraPorTurno(tiros: string[]) {
+		if (this.esTiradaStrike(tiros[0])) {
 			this.bonusExtra += 2;
-		} else if (this.esTiradaSpare(tiro[1])) {
+		} else if (this.esTiradaSpare(tiros[1])) {
 			this.bonusExtra += 1;
 		}
 	}
