@@ -25,17 +25,17 @@ export class BowlingGame {
 		return this.puntuacion;
 	}
 
-	actualizarPuntuacionPorTurno(tiros: string[]) {
-		const sumaPuntosAcumulacionBonus = this.acumularPuntosPorBonusTiradasAnteriores(tiros[0], tiros[1]);
-		const puntuacionParcial = this.obtenerPuntuacionParcialLanzamiento(tiros[0], tiros[1]);
+	actualizarPuntuacionPorTurno(lanzamientos: string[]) {
+		const sumaPuntosAcumulacionBonus = this.acumularPuntosPorBonusTiradasAnteriores(lanzamientos[0], lanzamientos[1]);
+		const puntuacionParcial = this.obtenerPuntuacionParcialLanzamiento(lanzamientos[0], lanzamientos[1]);
 
 		this.puntuacion += puntuacionParcial + sumaPuntosAcumulacionBonus;
 		/***
 		console.log(
 			'actualizarPuntuacionPorTurno: ->' +
-				tiros[0] +
+				lanzamientos[0] +
 				',' +
-				tiros[1] +
+				lanzamientos[1] +
 				',' +
 				this.puntuacion +
 				' = ' +
@@ -49,43 +49,43 @@ export class BowlingGame {
 		 ***/
 	}
 
-	actualizarBonusExtraPorTurno(tiros: string[]) {
-		if (this.esTiradaStrike(tiros[0])) {
+	actualizarBonusExtraPorTurno(lanzamientos: string[]) {
+		if (this.esTiradaStrike(lanzamientos[0])) {
 			this.bonusExtra += 2;
-		} else if (this.esTiradaSpare(tiros[1])) {
+		} else if (this.esTiradaSpare(lanzamientos[1])) {
 			this.bonusExtra += 1;
 		}
 	}
 
-	acumularPuntosPorBonusTiradasAnteriores(primerTiro: string, segundoTiro: string): number {
+	acumularPuntosPorBonusTiradasAnteriores(primerLanzamiento: string, segundoLanzamiento: string): number {
 		let sumaPuntosAcumulacionBonus = 0;
 
-		sumaPuntosAcumulacionBonus = this.calcularPuntosPorBonus(primerTiro);
-		if (this.esTiradaStrike(primerTiro)) {
-			sumaPuntosAcumulacionBonus += this.calcularPuntosPorBonus(primerTiro);
+		sumaPuntosAcumulacionBonus = this.calcularPuntosPorBonus(primerLanzamiento);
+		if (this.esTiradaStrike(primerLanzamiento)) {
+			sumaPuntosAcumulacionBonus += this.calcularPuntosPorBonus(primerLanzamiento);
 		}
-		if (!this.esTiradaStrike(primerTiro)) {
-			sumaPuntosAcumulacionBonus += this.calcularPuntosPorBonus(segundoTiro);
+		if (!this.esTiradaStrike(primerLanzamiento)) {
+			sumaPuntosAcumulacionBonus += this.calcularPuntosPorBonus(segundoLanzamiento);
 		}
 		return sumaPuntosAcumulacionBonus;
 	}
 
-	calcularPuntosPorBonus(tiro: string) {
+	calcularPuntosPorBonus(lanzamiento: string) {
 		let sumaPuntosAcumulacionBonus = 0;
 		if (this.hayBonusPorTiradaAnterior()) {
-			sumaPuntosAcumulacionBonus = this.obtenerCorrespondenciaTiradaPuntos(tiro);
+			sumaPuntosAcumulacionBonus = this.obtenerCorrespondenciaTiradaPuntos(lanzamiento);
 			this.decrementarBonusExtra(1);
 		}
 		return sumaPuntosAcumulacionBonus;
 	}
 
-	obtenerPuntuacionParcialLanzamiento(primerTiro: string, segundoTiro: string): number {
-		if (this.esTiradaStrike(primerTiro) || this.esTiradaSpare(segundoTiro)) {
+	obtenerPuntuacionParcialLanzamiento(primerLanzamiento: string, segundoLanzamiento: string): number {
+		if (this.esTiradaStrike(primerLanzamiento) || this.esTiradaSpare(segundoLanzamiento)) {
 			return 10;
 		}
-		const puntuacionPrimerTiro = this.obtenerCorrespondenciaTiradaPuntos(primerTiro);
-		const puntuacionSegundoTiro = this.obtenerCorrespondenciaTiradaPuntos(segundoTiro);
-		return puntuacionPrimerTiro + puntuacionSegundoTiro;
+		const puntuacionPrimerLanzamiento = this.obtenerCorrespondenciaTiradaPuntos(primerLanzamiento);
+		const puntuacionSegundoLanzamiento = this.obtenerCorrespondenciaTiradaPuntos(segundoLanzamiento);
+		return puntuacionPrimerLanzamiento + puntuacionSegundoLanzamiento;
 	}
 
 	hayBonusPorTiradaAnterior(): boolean {
@@ -104,14 +104,14 @@ export class BowlingGame {
 		return lanzamiento === '/';
 	}
 
-	obtenerCorrespondenciaTiradaPuntos(tiro: string) {
-		if (tiro === '-') {
+	obtenerCorrespondenciaTiradaPuntos(lanzamiento: string) {
+		if (lanzamiento === '-') {
 			return 0;
 		}
-		if (this.esTiradaSpare(tiro) || this.esTiradaStrike(tiro)) {
+		if (this.esTiradaSpare(lanzamiento) || this.esTiradaStrike(lanzamiento)) {
 			return 10;
 		}
 
-		return +tiro;
+		return +lanzamiento;
 	}
 }
