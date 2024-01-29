@@ -1,6 +1,6 @@
 export class BowlingGame {
-	puntuacion: number;
-	bonusExtra: number;
+	private puntuacion: number;
+	private bonusExtra: number;
 
 	constructor() {}
 
@@ -25,7 +25,7 @@ export class BowlingGame {
 		return this.puntuacion;
 	}
 
-	actualizarPuntuacionPorTurno(lanzamientos: string[]) {
+	private actualizarPuntuacionPorTurno(lanzamientos: string[]) {
 		const sumaPuntosAcumulacionBonus = this.acumularPuntosPorBonusTiradasAnteriores(lanzamientos[0], lanzamientos[1]);
 		const puntuacionParcial = this.obtenerPuntuacionParcialLanzamiento(lanzamientos[0], lanzamientos[1]);
 
@@ -49,7 +49,7 @@ export class BowlingGame {
 		 ***/
 	}
 
-	actualizarBonusExtraPorTurno(lanzamientos: string[]) {
+	private actualizarBonusExtraPorTurno(lanzamientos: string[]) {
 		if (this.esTiradaStrike(lanzamientos[0])) {
 			this.bonusExtra += 2;
 		} else if (this.esTiradaSpare(lanzamientos[1])) {
@@ -57,7 +57,7 @@ export class BowlingGame {
 		}
 	}
 
-	acumularPuntosPorBonusTiradasAnteriores(primerLanzamiento: string, segundoLanzamiento: string): number {
+	private acumularPuntosPorBonusTiradasAnteriores(primerLanzamiento: string, segundoLanzamiento: string): number {
 		let sumaPuntosAcumulacionBonus = 0;
 
 		sumaPuntosAcumulacionBonus = this.calcularPuntosPorBonus(primerLanzamiento);
@@ -70,7 +70,7 @@ export class BowlingGame {
 		return sumaPuntosAcumulacionBonus;
 	}
 
-	calcularPuntosPorBonus(lanzamiento: string) {
+	private calcularPuntosPorBonus(lanzamiento: string) {
 		let sumaPuntosAcumulacionBonus = 0;
 		if (this.hayBonusPorTiradaAnterior()) {
 			sumaPuntosAcumulacionBonus = this.obtenerCorrespondenciaTiradaPuntos(lanzamiento);
@@ -79,7 +79,7 @@ export class BowlingGame {
 		return sumaPuntosAcumulacionBonus;
 	}
 
-	obtenerPuntuacionParcialLanzamiento(primerLanzamiento: string, segundoLanzamiento: string): number {
+	private obtenerPuntuacionParcialLanzamiento(primerLanzamiento: string, segundoLanzamiento: string): number {
 		if (this.esTiradaStrike(primerLanzamiento) || this.esTiradaSpare(segundoLanzamiento)) {
 			return 10;
 		}
@@ -88,23 +88,23 @@ export class BowlingGame {
 		return puntuacionPrimerLanzamiento + puntuacionSegundoLanzamiento;
 	}
 
-	hayBonusPorTiradaAnterior(): boolean {
+	private hayBonusPorTiradaAnterior(): boolean {
 		return this.bonusExtra > 0;
 	}
 
-	decrementarBonusExtra(unidades: number) {
+	private decrementarBonusExtra(unidades: number) {
 		this.bonusExtra -= unidades;
 	}
 
-	esTiradaStrike(lanzamiento: string): boolean {
+	private esTiradaStrike(lanzamiento: string): boolean {
 		return lanzamiento === 'X';
 	}
 
-	esTiradaSpare(lanzamiento: string): boolean {
+	private esTiradaSpare(lanzamiento: string): boolean {
 		return lanzamiento === '/';
 	}
 
-	obtenerCorrespondenciaTiradaPuntos(lanzamiento: string) {
+	private obtenerCorrespondenciaTiradaPuntos(lanzamiento: string) {
 		if (lanzamiento === '-') {
 			return 0;
 		}
