@@ -1,117 +1,117 @@
 export class BowlingGame {
-	private puntuacion: number;
-	private bonusExtra: number;
+	private score: number;
+	private extraBonus: number;
 
 	constructor() {}
 
-	bowling(turnos: string[][]) {
-		this.puntuacion = 0;
-		this.bonusExtra = 0;
+	bowling(frames: string[][]) {
+		this.score = 0;
+		this.extraBonus = 0;
 
-		turnos.forEach((turno) => {
-			this.actualizarPuntuacionPorTurno(turno);
-			this.actualizarBonusExtraPorTurno(turno);
+		frames.forEach((frame) => {
+			this.updateScorePerFrame(frame);
+			this.updateExtraBonusPerFrame(frame);
 		});
-		return this.puntuacion;
+		return this.score;
 	}
 
-	lanzamientosExtra(lanzamientos: string[][]) {
-		this.puntuacion = 0;
-		this.bonusExtra = 0;
+	extraShots(shots: string[][]) {
+		this.score = 0;
+		this.extraBonus = 0;
 
-		lanzamientos.forEach((lanzamiento) => {
-			this.actualizarPuntuacionPorTurno(lanzamiento);
+		shots.forEach((shot) => {
+			this.updateScorePerFrame(shot);
 		});
-		return this.puntuacion;
+		return this.score;
 	}
 
-	private actualizarPuntuacionPorTurno(lanzamientos: string[]) {
-		const sumaPuntosAcumulacionBonus = this.acumularPuntosPorBonusTiradasAnteriores(lanzamientos[0], lanzamientos[1]);
-		const puntuacionParcial = this.obtenerPuntuacionParcialLanzamiento(lanzamientos[0], lanzamientos[1]);
+	private updateScorePerFrame(shots: string[]) {
+		const accumulatedPointsForPreviousBonus = this.sumPointsForPreviousBonusShots(shots[0], shots[1]);
+		const partialScore = this.getPartialScoreForShot(shots[0], shots[1]);
 
-		this.puntuacion += puntuacionParcial + sumaPuntosAcumulacionBonus;
+		this.score += partialScore + accumulatedPointsForPreviousBonus;
 		/***
 		console.log(
-			'actualizarPuntuacionPorTurno: ->' +
-				lanzamientos[0] +
+			'updateScorePerFrame: ->' +
+				shots[0] +
 				',' +
-				lanzamientos[1] +
+				shots[1] +
 				',' +
-				this.puntuacion +
+				this.score +
 				' = ' +
 				puntuacionPasada +
 				'+' +
-				puntuacionParcial +
+				partialScore +
 				'+' +
-				sumaPuntosAcumulacionBonus
+				accumulatedPointsForPreviousBonus
 		);
 	
 		 ***/
 	}
 
-	private actualizarBonusExtraPorTurno(lanzamientos: string[]) {
-		if (this.esTiradaStrike(lanzamientos[0])) {
-			this.bonusExtra += 2;
-		} else if (this.esTiradaSpare(lanzamientos[1])) {
-			this.bonusExtra += 1;
+	private updateExtraBonusPerFrame(shots: string[]) {
+		if (this.isStrikeShot(shots[0])) {
+			this.extraBonus += 2;
+		} else if (this.isSpareShot(shots[1])) {
+			this.extraBonus += 1;
 		}
 	}
 
-	private acumularPuntosPorBonusTiradasAnteriores(primerLanzamiento: string, segundoLanzamiento: string): number {
-		let sumaPuntosAcumulacionBonus = 0;
+	private sumPointsForPreviousBonusShots(firstShot: string, secondShot: string): number {
+		let accumulatedPointsForPreviousBonus = 0;
 
-		sumaPuntosAcumulacionBonus = this.calcularPuntosPorBonus(primerLanzamiento);
-		if (this.esTiradaStrike(primerLanzamiento)) {
-			sumaPuntosAcumulacionBonus += this.calcularPuntosPorBonus(primerLanzamiento);
+		accumulatedPointsForPreviousBonus = this.calculatePointsByBonus(firstShot);
+		if (this.isStrikeShot(firstShot)) {
+			accumulatedPointsForPreviousBonus += this.calculatePointsByBonus(firstShot);
 		}
-		if (!this.esTiradaStrike(primerLanzamiento)) {
-			sumaPuntosAcumulacionBonus += this.calcularPuntosPorBonus(segundoLanzamiento);
+		if (!this.isStrikeShot(firstShot)) {
+			accumulatedPointsForPreviousBonus += this.calculatePointsByBonus(secondShot);
 		}
-		return sumaPuntosAcumulacionBonus;
+		return accumulatedPointsForPreviousBonus;
 	}
 
-	private calcularPuntosPorBonus(lanzamiento: string) {
-		let sumaPuntosAcumulacionBonus = 0;
-		if (this.hayBonusPorTiradaAnterior()) {
-			sumaPuntosAcumulacionBonus = this.obtenerCorrespondenciaTiradaPuntos(lanzamiento);
-			this.decrementarBonusExtra(1);
+	private calculatePointsByBonus(shot: string) {
+		let accumulatedPointsForPreviousBonus = 0;
+		if (this.isThereAccumulatedBonus()) {
+			accumulatedPointsForPreviousBonus = this.mappingShotToPoints(shot);
+			this.decreaseExtraBonus(1);
 		}
-		return sumaPuntosAcumulacionBonus;
+		return accumulatedPointsForPreviousBonus;
 	}
 
-	private obtenerPuntuacionParcialLanzamiento(primerLanzamiento: string, segundoLanzamiento: string): number {
-		if (this.esTiradaStrike(primerLanzamiento) || this.esTiradaSpare(segundoLanzamiento)) {
+	private getPartialScoreForShot(firstShot: string, secondShot: string): number {
+		if (this.isStrikeShot(firstShot) || this.isSpareShot(secondShot)) {
 			return 10;
 		}
-		const puntuacionPrimerLanzamiento = this.obtenerCorrespondenciaTiradaPuntos(primerLanzamiento);
-		const puntuacionSegundoLanzamiento = this.obtenerCorrespondenciaTiradaPuntos(segundoLanzamiento);
-		return puntuacionPrimerLanzamiento + puntuacionSegundoLanzamiento;
+		const firstShotScore = this.mappingShotToPoints(firstShot);
+		const secongShotScore = this.mappingShotToPoints(secondShot);
+		return firstShotScore + secongShotScore;
 	}
 
-	private hayBonusPorTiradaAnterior(): boolean {
-		return this.bonusExtra > 0;
+	private isThereAccumulatedBonus(): boolean {
+		return this.extraBonus > 0;
 	}
 
-	private decrementarBonusExtra(unidades: number) {
-		this.bonusExtra -= unidades;
+	private decreaseExtraBonus(unidades: number) {
+		this.extraBonus -= unidades;
 	}
 
-	private esTiradaStrike(lanzamiento: string): boolean {
-		return lanzamiento === 'X';
+	private isStrikeShot(shot: string): boolean {
+		return shot === 'X';
 	}
 
-	private esTiradaSpare(lanzamiento: string): boolean {
-		return lanzamiento === '/';
+	private isSpareShot(shot: string): boolean {
+		return shot === '/';
 	}
 
-	private obtenerCorrespondenciaTiradaPuntos(lanzamiento: string) {
-		if (lanzamiento === '-') {
+	private mappingShotToPoints(shot: string) {
+		if (shot === '-') {
 			return 0;
 		}
-		if (this.esTiradaSpare(lanzamiento) || this.esTiradaStrike(lanzamiento)) {
+		if (this.isSpareShot(shot) || this.isStrikeShot(shot)) {
 			return 10;
 		}
 
-		return +lanzamiento;
+		return +shot;
 	}
 }
