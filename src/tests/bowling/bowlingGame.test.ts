@@ -1,12 +1,12 @@
 import { BowlingGame } from './../../core/bowling/BowlingGame';
 
-describe('El game de Bowling', () => {
+describe('Bowling Game', () => {
 	let game: BowlingGame;
 
 	beforeEach(() => {
 		game = new BowlingGame();
 	});
-	it('20 shots con 20 fallos seran 0 puntos', () => {
+	it('20 shots with 20 failures should be 0 points', () => {
 		const shots: string[][] = [
 			['-', '-'],
 			['-', '-'],
@@ -24,7 +24,7 @@ describe('El game de Bowling', () => {
 
 		expect(result).toBe(expected);
 	});
-	it('20 shots con 10 pares de 1, seran 20 puntos', () => {
+	it('20 shots with 10 pairs de 1, should be 20 points', () => {
 		const shots: string[][] = [
 			['1', '1'],
 			['1', '1'],
@@ -42,7 +42,7 @@ describe('El game de Bowling', () => {
 
 		expect(result).toBe(expected);
 	});
-	it('20 shots, 1 spare, 1 acierto, 17 fallos, son 21 puntos', () => {
+	it('20 shots, 1 spare, 1 hit, 17 failures, should be 21 points', () => {
 		const shots: string[][] = [
 			['5', '/'],
 			['5', '1'],
@@ -61,7 +61,7 @@ describe('El game de Bowling', () => {
 		expect(result).toBe(expected);
 	});
 
-	it('19 shots, 1 strke con 2 aciertos, el resto fallos, son 20', () => {
+	it('19 shots, 1 strke with 2 hits, the rest failures, should be 20 points', () => {
 		const shots: string[][] = [
 			['X', '-'],
 			['2', '3'],
@@ -80,7 +80,7 @@ describe('El game de Bowling', () => {
 		expect(result).toBe(expected);
 	});
 
-	it('12 shots, 12 strikes seran 300', () => {
+	it('12 shots, 12 strikes should be 300 points', () => {
 		const shots: string[][] = [
 			['X', '-'],
 			['X', '-'],
@@ -97,7 +97,7 @@ describe('El game de Bowling', () => {
 			['X', '-'],
 			['X', '-'],
 
-			//bonus por los ultimos strike
+			//bonus for the last strike
 		];
 		const result = game.bowling(shots) + game.extraShots(extraBonus);
 		const expected = 300;
@@ -105,7 +105,7 @@ describe('El game de Bowling', () => {
 		expect(result).toBe(expected);
 	});
 
-	it('20 shots, 10 spare -> 5-5', () => {
+	it('20 shots, 10 spare -> 5-5 should be 150 points', () => {
 		const shots: string[][] = [
 			['5', '/'],
 			['5', '/'],
@@ -119,7 +119,7 @@ describe('El game de Bowling', () => {
 			['5', '/'],
 		];
 		const extraBonus: string[][] = [
-			['5', '-'], //bonus por el ultimo spare
+			['5', '-'], //bonus for the last spare
 		];
 		const result = game.bowling(shots) + game.extraShots(extraBonus);
 		const expected = 150;
@@ -127,7 +127,7 @@ describe('El game de Bowling', () => {
 		expect(result).toBe(expected);
 	});
 
-	it('20 shots, 10 spare -> 8-2', () => {
+	it('20 shots, 10 spare -> 8-2 should be 180 points', () => {
 		const shots: string[][] = [
 			['8', '/'],
 			['8', '/'],
@@ -141,7 +141,7 @@ describe('El game de Bowling', () => {
 			['8', '/'],
 		];
 		const extraBonus: string[][] = [
-			['8', '-'], //bonus por el ultimo spare
+			['8', '-'], //bonus for the last spare
 		];
 		const result = game.bowling(shots) + game.extraShots(extraBonus);
 		const expected = 180;
