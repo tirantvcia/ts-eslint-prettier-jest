@@ -19,6 +19,10 @@ class Cell {
             if(numberOfNeighbors === 2 || numberOfNeighbors === 3){
                 return CellStatus.Alive;
             }
+        } else {
+            if(numberOfNeighbors === 3) {
+                return CellStatus.Alive;
+            }
         }
 
         return CellStatus.Dead;    
@@ -33,13 +37,18 @@ describe('Game of Life', () => {
         it('Any live cell with two or three live neighbors lives on to the next generation', ()=>{
             let numberOfNeighbors = 2;
             expect(new Cell(CellStatus.Alive).regenerate(numberOfNeighbors)).toBe(CellStatus.Alive);
+            expect(new Cell(CellStatus.Dead).regenerate(numberOfNeighbors)).toBe(CellStatus.Dead);
             numberOfNeighbors = 3;
             expect(new Cell(CellStatus.Alive).regenerate(numberOfNeighbors)).toBe(CellStatus.Alive);
-            expect(new Cell(CellStatus.Dead).regenerate(numberOfNeighbors)).toBe(CellStatus.Dead);
+            
         })  
         it('Any live cell with more than three live neighbors dies, as if by overcrowding', ()=>{
             let numberOfNeighbors = 4;
             expect(new Cell(CellStatus.Alive).regenerate(numberOfNeighbors)).toBe(CellStatus.Dead);
             expect(new Cell(CellStatus.Dead).regenerate(numberOfNeighbors)).toBe(CellStatus.Dead);
         })  
+        it('Any dead cell with exactly three live neighbors becomes a live cell', ()=>{
+            let numberOfNeighbors = 3;
+            expect(new Cell(CellStatus.Dead).regenerate(numberOfNeighbors)).toBe(CellStatus.Alive);
+        })          
 });
