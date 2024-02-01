@@ -8,12 +8,6 @@ export class Cell {
     constructor(readonly status: CellStatus) {
     }
 
-    regenerate(numberOfNeighbors: number) {
-        return this.isAlive()? 
-        this.statusForAliveCell(numberOfNeighbors):
-        this.statusForDeadCell(numberOfNeighbors);
-    }
-
     regenerateNew(numberOfNeighbors: number): Cell {
         let nextStatus = this.isAlive()? 
         this.statusForAliveCell(numberOfNeighbors):
