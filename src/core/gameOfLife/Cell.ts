@@ -5,7 +5,7 @@ export enum CellStatus {
 }
 export class Cell {
 
-    constructor(readonly status: CellStatus) {
+    constructor(private readonly status: CellStatus) {
     }
 
     regenerateNew(numberOfNeighbors: number): Cell {
