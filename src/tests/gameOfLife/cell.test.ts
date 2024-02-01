@@ -21,10 +21,7 @@ class Cell {
 
 describe('Game of Life', () => {
         it('Any live cell with fewer than two live neighbors dies,  if coused by underpopulation', ()=>{
-            const cell : Cell = new Cell(CellStatus.Alive);
             const numberOfNeighbors = 2;
-            let nexStatus = cell.regenerate(numberOfNeighbors);
-            expect(nexStatus).toBe(CellStatus.Dead);
-
+            expect(new Cell(CellStatus.Alive).regenerate(numberOfNeighbors)).toBe(CellStatus.Dead);
         })
 });
