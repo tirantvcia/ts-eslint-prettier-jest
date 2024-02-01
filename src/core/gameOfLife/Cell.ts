@@ -13,6 +13,14 @@ export class Cell {
         this.statusForAliveCell(numberOfNeighbors):
         this.statusForDeadCell(numberOfNeighbors);
     }
+
+    regenerateNew(numberOfNeighbors: number): Cell {
+        let nextStatus = this.isAlive()? 
+        this.statusForAliveCell(numberOfNeighbors):
+        this.statusForDeadCell(numberOfNeighbors);
+        return new Cell(nextStatus);
+    }
+
     private statusForAliveCell(numberOfNeighbors: number) {
         let isStablaPolulation = (numberOfNeighbors === 3 || numberOfNeighbors === 2) ;
         return isStablaPolulation?CellStatus.Alive:CellStatus.Dead;
@@ -22,7 +30,7 @@ export class Cell {
         return (numberOfNeighbors === 3)? CellStatus.Alive: CellStatus.Dead;
     }
 
-    private isAlive() {
+    public isAlive() {
         return this.status === CellStatus.Alive;
     }
 }
