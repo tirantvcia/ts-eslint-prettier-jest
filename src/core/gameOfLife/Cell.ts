@@ -13,16 +13,14 @@ export class Cell {
         this.statusForAliveCell(numberOfNeighbors):
         this.statusForDeadCell(numberOfNeighbors);
     }
-    statusForAliveCell(numberOfNeighbors: number) {
+    private statusForAliveCell(numberOfNeighbors: number) {
         let isStablaPolulation = (numberOfNeighbors === 3 || numberOfNeighbors === 2) ;
         return isStablaPolulation?CellStatus.Alive:CellStatus.Dead;
 
     }
-    statusForDeadCell(numberOfNeighbors: number) {
+    private statusForDeadCell(numberOfNeighbors: number) {
         return (numberOfNeighbors === 3)? CellStatus.Alive: CellStatus.Dead;
     }
-
-
 
     private isAlive() {
         return this.status === CellStatus.Alive;
