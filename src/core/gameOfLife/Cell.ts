@@ -9,14 +9,22 @@ export class Cell {
     }
 
     regenerate(numberOfNeighbors: number) {
-        if (numberOfNeighbors === 3) {
-            return CellStatus.Alive;
-        }
+        return this.isAlive()? 
+        this.statusForAliveCell(numberOfNeighbors):
+        this.statusForDeadCell(numberOfNeighbors);
+    }
+    statusForAliveCell(numberOfNeighbors: number) {
+        let isStablaPolulation = (numberOfNeighbors === 3 || numberOfNeighbors === 2) ;
+        return isStablaPolulation?CellStatus.Alive:CellStatus.Dead;
 
-        if (this.status === CellStatus.Alive && numberOfNeighbors === 2) {
-            return CellStatus.Alive;
-        }
+    }
+    statusForDeadCell(numberOfNeighbors: number) {
+        return (numberOfNeighbors === 3)? CellStatus.Alive: CellStatus.Dead;
+    }
 
-        return CellStatus.Dead;
+
+
+    private isAlive() {
+        return this.status === CellStatus.Alive;
     }
 }
