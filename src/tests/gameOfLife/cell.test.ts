@@ -26,7 +26,7 @@ class Cell {
 }
 
 describe('Game of Life', () => {
-        it('Any live cell with fewer than two live neighbors dies,  if coused by underpopulation', ()=>{
+        it('Any live cell with fewer than two live neighbors dies, as if coused by underpopulation', ()=>{
             const numberOfNeighbors = 1;
             expect(new Cell(CellStatus.Alive).regenerate(numberOfNeighbors)).toBe(CellStatus.Dead);
         })
@@ -35,6 +35,11 @@ describe('Game of Life', () => {
             expect(new Cell(CellStatus.Alive).regenerate(numberOfNeighbors)).toBe(CellStatus.Alive);
             numberOfNeighbors = 3;
             expect(new Cell(CellStatus.Alive).regenerate(numberOfNeighbors)).toBe(CellStatus.Alive);
+            expect(new Cell(CellStatus.Dead).regenerate(numberOfNeighbors)).toBe(CellStatus.Dead);
+        })  
+        it('Any live cell with more than three live neighbors dies, as if by overcrowding', ()=>{
+            let numberOfNeighbors = 4;
+            expect(new Cell(CellStatus.Alive).regenerate(numberOfNeighbors)).toBe(CellStatus.Dead);
             expect(new Cell(CellStatus.Dead).regenerate(numberOfNeighbors)).toBe(CellStatus.Dead);
         })  
 });
