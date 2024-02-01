@@ -5,7 +5,14 @@ export enum CellStatus {
 }
 export class Cell {
 
-    constructor(private readonly status: CellStatus) {
+    private constructor(private readonly status: CellStatus) {
+    }
+
+    static create (status: CellStatus) {
+        if(status == null || status === undefined) {
+            throw new Error('invalid status');
+        }
+        return new Cell(status);
     }
 
     regenerateNew(numberOfNeighbors: number): Cell {
