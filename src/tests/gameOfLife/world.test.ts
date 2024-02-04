@@ -15,6 +15,9 @@ number of neighbors for a some coordinate
 [[Alive, Alive, Alive]]  in coordinates (1,1) => 8
 */
 class WorldGame {
+    aliveNeighbors(row: number, column: number): any {
+       return 0;
+    }
     
     private constructor(readonly cellMatrix:Cell[][]) {
     }
@@ -40,5 +43,9 @@ describe('The world', ()=> {
             [Cell.create(CellStatus.Dead),  Cell.create(CellStatus.Dead), Cell.create(CellStatus.Dead)],
             [Cell.create(CellStatus.Dead),  Cell.create(CellStatus.Dead), Cell.create(CellStatus.Dead)]
         ])
+    })
+    it('gets alive neighbors for a fiven coordinates', ()=> {
+        const world = WorldGame.createFrom([[Dead]]);
+        expect(world.aliveNeighbors(0,0)).toBe(0);
     })
 })
