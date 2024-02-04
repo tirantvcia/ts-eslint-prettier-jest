@@ -16,21 +16,25 @@ number of neighbors for a some coordinate
 */
 class WorldGame {
     aliveNeighbors(row: number, column: number): any {
+        return this.aliveColumnNeigbors(column, row);
+    }
+    
+    private constructor(readonly cellMatrix:Cell[][]) {
+    }
+
+    private aliveColumnNeigbors(column: number, row: number) {
         let aliveNeighbors = 0;
         const previousColumn = column - 1;
-        
-        if(previousColumn >= 0 && this.isAliveCellAt(row, previousColumn)) {
+
+        if (previousColumn >= 0 && this.isAliveCellAt(row, previousColumn)) {
             aliveNeighbors++;
         }
         const nextColumn = column + 1;
         const rowLength = this.cellMatrix[row].length;
-        if(nextColumn < rowLength && this.isAliveCellAt(row, nextColumn)) {
+        if (nextColumn < rowLength && this.isAliveCellAt(row, nextColumn)) {
             aliveNeighbors++;
         }
-       return aliveNeighbors;
-    }
-    
-    private constructor(readonly cellMatrix:Cell[][]) {
+        return aliveNeighbors;
     }
 
     private isThereCellAt(row: number, nextColumn: number) {
