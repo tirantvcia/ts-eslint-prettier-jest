@@ -16,10 +16,29 @@ number of neighbors for a some coordinate
 */
 class WorldGame {
     aliveNeighbors(row: number, column: number): any {
-       return 0;
+        let aliveNeighbors = 0;
+        const previousColumn = column - 1;
+        
+        if(previousColumn >= 0 && this.isAliveCellAt(row, previousColumn)) {
+            aliveNeighbors++;
+        }
+        const nextColumn = column + 1;
+        const rowLength = this.cellMatrix[row].length;
+        if(nextColumn < rowLength && this.isAliveCellAt(row, nextColumn)) {
+            aliveNeighbors++;
+        }
+       return aliveNeighbors;
     }
     
     private constructor(readonly cellMatrix:Cell[][]) {
+    }
+
+    private isThereCellAt(row: number, nextColumn: number) {
+        return this.cellMatrix[row][nextColumn] !== undefined;
+    }
+
+    private isAliveCellAt(row: number, column: number) {
+        return this.cellMatrix[row][column].isAlive();
     }
 
     static createFrom(initialStatus:CellStatus[][]) {
@@ -45,7 +64,10 @@ describe('The world', ()=> {
         ])
     })
     it('gets alive neighbors for a fiven coordinates', ()=> {
-        const world = WorldGame.createFrom([[Dead]]);
-        expect(world.aliveNeighbors(0,0)).toBe(0);
+        expect(WorldGame.createFrom([[Dead]]).aliveNeighbors(0,0)).toBe(0);
+        expect(WorldGame.createFrom([[Alive, Dead]]).aliveNeighbors(0,1)).toBe(1);
+        expect(WorldGame.createFrom([[Dead, Dead]]).aliveNeighbors(0,1)).toBe(0);
+        expect(WorldGame.createFrom([[Alive, Dead, Alive]]).aliveNeighbors(0,1)).toBe(2);
+        expect(WorldGame.createFrom([[Dead, Dead, Dead]]).aliveNeighbors(0,1)).toBe(0);
     })
 })
