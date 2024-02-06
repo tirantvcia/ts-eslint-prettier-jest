@@ -15,6 +15,16 @@ number of neighbors for a some coordinate
 [[Alive, Alive, Alive]]  in coordinates (1,1) => 8
 */
 class WorldGame {
+    static createFrom(initialStatus:CellStatus[][]) {
+        const cellMatrix = initialStatus.map(row => row.map(status => Cell.create(status)) );
+        return new WorldGame(cellMatrix);
+    }
+
+    nextGenerarion() {
+        const cellMatrix = this.cellMatrix.map(
+            (row, rowIndex) => row.map((cell, columnIndex) => cell.regenerate(this.aliveNeighbors(rowIndex, columnIndex))));
+        return new WorldGame(cellMatrix);
+    }
     aliveNeighbors(row: number, column: number): any {
 
         return this.aliveNeighborsInPreviousRow(row, column) + this.aliveColumnNeighbors(row, column) + this.aliveNeighborsInNextRow(row, column);
@@ -75,10 +85,6 @@ class WorldGame {
         return this.cellMatrix[row][column].isAlive();
     }
 
-    static createFrom(initialStatus:CellStatus[][]) {
-        const cellMatrix = initialStatus.map(row => row.map(status => Cell.create(status)) );
-        return new WorldGame(cellMatrix);
-    }
 
 }
 const {Alive, Dead} = CellStatus;
@@ -115,5 +121,19 @@ describe('The world', ()=> {
                 [Alive, Dead, Alive],
                 [Alive, Dead, Alive],
                 [Alive, Dead, Alive]]).aliveNeighbors(1,1)).toBe(6);
+    })
+    it('generate the next state of the game', ()=> {
+        const world = WorldGame.createFrom([
+            [Dead, Alive, Dead],
+            [Dead, Alive, Dead],
+            [Dead, Alive, Dead]]);
+
+            const nextState = world.nextGenerarion().cellMatrix;
+
+            expect(nextState).toEqual([
+                [Cell.create(CellStatus.Dead),  Cell.create(CellStatus.Dead), Cell.create(CellStatus.Dead)],
+                [Cell.create(CellStatus.Alive),  Cell.create(CellStatus.Alive), Cell.create(CellStatus.Alive)],
+                [Cell.create(CellStatus.Dead),  Cell.create(CellStatus.Dead), Cell.create(CellStatus.Dead)]
+            ]);
     })
 })

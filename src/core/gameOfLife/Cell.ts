@@ -15,7 +15,7 @@ export class Cell {
         return new Cell(status);
     }
 
-    regenerateNew(numberOfNeighbors: number): Cell {
+    regenerate(numberOfNeighbors: number): Cell {
         let nextStatus = this.isAlive()? 
         this.statusForAliveCell(numberOfNeighbors):
         this.statusForDeadCell(numberOfNeighbors);
