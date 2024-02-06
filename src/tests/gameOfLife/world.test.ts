@@ -16,17 +16,47 @@ number of neighbors for a some coordinate
 */
 class WorldGame {
     aliveNeighbors(row: number, column: number): any {
-        return this.aliveColumnNeigbors(column, row);
+
+        return this.aliveNeighborsInPreviousRow(row, column) + this.aliveColumnNeighbors(row, column) + this.aliveNeighborsInNextRow(row, column);
+
     }
     
     private constructor(readonly cellMatrix:Cell[][]) {
     }
 
-    private aliveColumnNeigbors(column: number, row: number) {
-        let aliveNeighbors = 0;
-        const previousColumn = column - 1;
+    private aliveNeighborsInNextRow(row: number, column: number) {
+        const nextRow = row + 1
+        if(nextRow >= this.cellMatrix.length) {
+            return 0;
+        }
+        return this.aliveRowNeighbors(nextRow, column);
+    }
 
+    private aliveNeighborsInPreviousRow(row: number, column: number) {
+        if(row - 1 < 0) {
+            return 0;
+        }
+        return this.aliveColumnNeighbors(row - 1, column);
+    }
+
+    private aliveRowNeighbors(nextRow: number, column: number) {
+        let aliveNeigbors = 0;
+        if (nextRow < this.cellMatrix.length) {
+            aliveNeigbors += this.aliveColumnNeighbors(nextRow, column);
+        }
+        return aliveNeigbors;
+    }
+
+    private aliveColumnNeighbors(row: number, column: number) {
+
+
+        let aliveNeighbors = 0;
+        
+        const previousColumn = column - 1;
         if (previousColumn >= 0 && this.isAliveCellAt(row, previousColumn)) {
+            aliveNeighbors++;
+        }
+        if (this.isAliveCellAt(row, column)) {
             aliveNeighbors++;
         }
         const nextColumn = column + 1;
@@ -67,11 +97,23 @@ describe('The world', ()=> {
             [Cell.create(CellStatus.Dead),  Cell.create(CellStatus.Dead), Cell.create(CellStatus.Dead)]
         ])
     })
-    it('gets alive neighbors for a fiven coordinates', ()=> {
+    it('gets alive neighbors for a given coordinates', ()=> {
         expect(WorldGame.createFrom([[Dead]]).aliveNeighbors(0,0)).toBe(0);
+ 
         expect(WorldGame.createFrom([[Alive, Dead]]).aliveNeighbors(0,1)).toBe(1);
         expect(WorldGame.createFrom([[Dead, Dead]]).aliveNeighbors(0,1)).toBe(0);
         expect(WorldGame.createFrom([[Alive, Dead, Alive]]).aliveNeighbors(0,1)).toBe(2);
         expect(WorldGame.createFrom([[Dead, Dead, Dead]]).aliveNeighbors(0,1)).toBe(0);
+        expect(WorldGame.createFrom([
+            [Alive, Dead, Alive],
+            [Alive, Dead, Alive]]).aliveNeighbors(0,1)).toBe(4);
+        expect(WorldGame.createFrom([
+                [Alive, Dead, Alive],
+                [Alive, Alive, Alive]]).aliveNeighbors(0,1)).toBe(5);
+
+        expect(WorldGame.createFrom([
+                [Alive, Dead, Alive],
+                [Alive, Dead, Alive],
+                [Alive, Dead, Alive]]).aliveNeighbors(1,1)).toBe(6);
     })
 })
