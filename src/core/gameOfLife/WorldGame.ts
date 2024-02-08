@@ -13,8 +13,10 @@ export class WorldGame {
         return new WorldGame(cellMatrix);
     }
     aliveNeighbors(row: number, column: number): any {
-
-        return this.aliveNeighborsInPreviousRow(row, column) + this.aliveColumnNeighbors(row, column) + this.aliveNeighborsInNextRow(row, column);
+        const aliveNeighborsInPreviousRow = this.aliveNeighborsInPreviousRow(row, column);
+        const aliveNeighborsInCurrentRow = this.aliveNeighborsForCurrentColumn(row, column);
+        const aliveNeighborsInNextRow = this.aliveNeighborsInNextRow(row, column);
+        return aliveNeighborsInPreviousRow + aliveNeighborsInCurrentRow + aliveNeighborsInNextRow;
 
     }
 
@@ -22,29 +24,36 @@ export class WorldGame {
     }
 
     private aliveNeighborsInNextRow(row: number, column: number) {
-        const nextRow = row + 1;
-        if (nextRow >= this.cellMatrix.length) {
+       
+        if (row + 1 >= this.cellMatrix.length) {
             return 0;
         }
-        return this.aliveRowNeighbors(nextRow, column);
+        const nextRow = row + 1;
+        let aliveColumnNeighbors = 0;
+        if (this.isAliveCellAt(nextRow, column)) {
+            aliveColumnNeighbors++;
+        }
+        aliveColumnNeighbors += this.aliveNeighborsForCurrentColumn(nextRow, column);
+     
+        return aliveColumnNeighbors;
     }
 
     private aliveNeighborsInPreviousRow(row: number, column: number) {
         if (row - 1 < 0) {
             return 0;
         }
-        return this.aliveColumnNeighbors(row - 1, column);
-    }
-
-    private aliveRowNeighbors(nextRow: number, column: number) {
-        let aliveNeigbors = 0;
-        if (nextRow < this.cellMatrix.length) {
-            aliveNeigbors += this.aliveColumnNeighbors(nextRow, column);
+        const previousRow = row - 1;
+        let aliveColumnNeighbors = this.aliveNeighborsForCurrentColumn(previousRow, column);
+        if (this.isAliveCellAt(previousRow, column)) {
+            aliveColumnNeighbors++;
         }
-        return aliveNeigbors;
+
+        return aliveColumnNeighbors;
     }
 
-    private aliveColumnNeighbors(row: number, column: number) {
+
+
+    private aliveNeighborsForCurrentColumn(row: number, column: number) {
 
 
         let aliveNeighbors = 0;
@@ -53,19 +62,13 @@ export class WorldGame {
         if (previousColumn >= 0 && this.isAliveCellAt(row, previousColumn)) {
             aliveNeighbors++;
         }
-        if (this.isAliveCellAt(row, column)) {
-            aliveNeighbors++;
-        }
+
         const nextColumn = column + 1;
         const rowLength = this.cellMatrix[row].length;
         if (nextColumn < rowLength && this.isAliveCellAt(row, nextColumn)) {
             aliveNeighbors++;
         }
         return aliveNeighbors;
-    }
-
-    private isThereCellAt(row: number, nextColumn: number) {
-        return this.cellMatrix[row][nextColumn] !== undefined;
     }
 
     private isAliveCellAt(row: number, column: number) {
