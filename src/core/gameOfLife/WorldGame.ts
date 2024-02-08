@@ -7,12 +7,17 @@ export class WorldGame {
         return new WorldGame(cellMatrix);
     }
 
+
     nextGenerarion() {
         const cellMatrix = this.cellMatrix.map(
             (row, rowIndex) => row.map((cell, columnIndex) => cell.regenerate(this.aliveNeighbors(rowIndex, columnIndex))));
         return new WorldGame(cellMatrix);
     }
-    aliveNeighbors(row: number, column: number): any {
+
+    private constructor(readonly cellMatrix: Cell[][]) {
+    }
+    
+    private aliveNeighbors(row: number, column: number): any {
         const aliveNeighborsInPreviousRow = this.aliveNeighborsInPreviousRow(row, column);
         const aliveNeighborsInCurrentRow = this.aliveNeighborsForCurrentColumn(row, column);
         const aliveNeighborsInNextRow = this.aliveNeighborsInNextRow(row, column);
@@ -20,8 +25,7 @@ export class WorldGame {
 
     }
 
-    private constructor(readonly cellMatrix: Cell[][]) {
-    }
+
 
     private aliveNeighborsInNextRow(row: number, column: number) {
        
