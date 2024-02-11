@@ -14,7 +14,7 @@ class TemplateEngine {
         }
         let textReplaced = this.template;
         this.variables.forEach((value, key) => {
-            textReplaced = textReplaced.replace('${'+key+'}', value);
+            textReplaced = textReplaced.replaceAll('${'+key+'}', value);
         });
         return textReplaced;
     }
@@ -52,6 +52,18 @@ describe('The template Engine', () => {
         const parsedTemplate = engine.parse();
 
         expect(parsedTemplate).toEqual('This is a template with a food and bar');
+
+    });
+
+    it('parse template with repeated variables', () => {
+        const template = 'This is a template with a ${variable}, ${variable} and ${anotherVariable}';
+        let variables = new Map<string, string>();
+        variables.set('variable', 'food');
+        variables.set('anotherVariable', 'bar');
+        const engine = new TemplateEngine(template, variables);
+        const parsedTemplate = engine.parse();
+
+        expect(parsedTemplate).toEqual('This is a template with a food, food and bar');
 
     });
 })

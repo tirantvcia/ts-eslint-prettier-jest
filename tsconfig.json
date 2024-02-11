@@ -4,6 +4,7 @@
         "module": "commonjs",
         "moduleResolution": "node",
         "jsx": "react",
+        "lib": ["ES2021"],
         "noImplicitAny": false,
         "sourceMap": true, 
         "outDir":"./lib/"
