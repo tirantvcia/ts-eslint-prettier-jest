@@ -41,7 +41,7 @@ describe('The template Engine', () => {
         let variables = new Map<string, string>();
 
         const engine = new TemplateEngine(template, variables);
-        const parsedTemplate = engine.parse();
+        const parsedTemplate = engine.parseNew().text;
 
         expect(parsedTemplate).toEqual(template);
 
