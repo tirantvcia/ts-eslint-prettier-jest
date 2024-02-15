@@ -27,25 +27,37 @@ class TemplateEngine {
                 warnings.push(warning);
             }
         });
+        const templateReplaced = new TemplateReplaced(textReplaced, warnings );
+        return this.addWarningsAboutNonReplacedVariables(templateReplaced);
+
+    }
+
+    private addWarningsAboutNonReplacedVariables(templateReplaced:TemplateReplaced) {
+        const textReplaced = templateReplaced.text;
+        const warningsAboutNonReplacedVariables: TemplateWarning[] = [];
+
         const regex: RegExp = /\$\{[a-zA-Z0-9-]+\}/g;
         const matches = textReplaced.match(regex);
         if(!matches) {
-            return new TemplateReplaced(textReplaced, warnings );
+            return templateReplaced;
         }
 
         matches.forEach(match => {
             const variableName = match.substring(2, match.length - 1);
             const warning = new TemplateWarning("variable "+ variableName + " not be replaced");
-            warnings.push(warning);            
+            warningsAboutNonReplacedVariables.push(warning);
         })
 
-        return new TemplateReplaced(textReplaced, warnings );
-    }
+        return templateReplaced.addWarning(warningsAboutNonReplacedVariables);
+}
    
 }
 
 class TemplateReplaced {
     constructor(readonly text: string, readonly warnings: ReadonlyArray<TemplateWarning>){}
+    addWarning(warnings:TemplateWarning[]) {
+       return  new TemplateReplaced(this.text, this.warnings.concat(warnings)); 
+    }
     containsWarnings () {
         return this.warnings.length > 0;
     }
