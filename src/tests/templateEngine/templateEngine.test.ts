@@ -1,13 +1,25 @@
-import { TemplateEngine } from './../../core/templateEngine/TemplateEngine';
+/*
+Happy path:
+'This is a template with zero variables' -> 'This is a template with zero variables
+'This is a template with a ${variable}', {variable: 'food'} -> 'This is a template with food'
+'This is a template with a ${variable} and ${anotherVariable}', {variable: 'foo', anotherVariable: 'bar'} -> 'This is a template with a foo and bar'
+Edge cases:
+- Varoables not being found
+- Non replaced variables
+- Null text & null dictionary
+*/
+import { TemplateEngine } from "./../../core/templateEngine/TemplateEngine";
+
 
 describe('The template Engine', () => {
     it('parse template without variable', () => {
         const template = 'This is a template with zero variables';
         let variables = new Map<string, string>();
 
-        const parsedTemplate = TemplateEngine.create(template, variables);
+        const engine = new TemplateEngine(template, variables);
+        const parsedTemplate = engine.parse().text;
 
-        expect(parsedTemplate.text).toEqual(template);
+        expect(parsedTemplate).toEqual(template);
 
     })
     it('parse template with a variable', () => {
@@ -15,10 +27,10 @@ describe('The template Engine', () => {
 
         let variables = new Map<string, string>();
         variables.set('variable', 'food');
+        const engine = new TemplateEngine(template, variables);
+        const parsedTemplate = engine.parse().text;
 
-        const parsedTemplate =  TemplateEngine.create(template, variables);
-
-        expect(parsedTemplate.text).toEqual('This is a template with a food');
+        expect(parsedTemplate).toEqual('This is a template with a food');
 
     })
     it('parse template with more than one different variables', () => {
@@ -27,10 +39,10 @@ describe('The template Engine', () => {
         variables.set('variable', 'food');
         variables.set('anotherVariable', 'bar');
     
+        const engine = new TemplateEngine(template, variables);
+        const parsedTemplate = engine.parse().text;
 
-        const parsedTemplate =  TemplateEngine.create(template, variables);
-
-        expect(parsedTemplate.text).toEqual('This is a template with a food and bar');
+        expect(parsedTemplate).toEqual('This is a template with a food and bar');
 
     });
 
@@ -40,9 +52,10 @@ describe('The template Engine', () => {
         variables.set('variable', 'food');
         variables.set('anotherVariable', 'bar');
     
-        const parsedTemplate =  TemplateEngine.create(template, variables);
+        const engine = new TemplateEngine(template, variables);
+        const parsedTemplate = engine.parse().text;
 
-        expect(parsedTemplate.text).toEqual('This is a template with a food, food and bar');
+        expect(parsedTemplate).toEqual('This is a template with a food, food and bar');
 
     });
 
@@ -52,7 +65,8 @@ describe('The template Engine', () => {
         variables.set('variable', 'food');
         variables.set('anotherVariable', 'bar');
     
-        const parsedTemplate =  TemplateEngine.create(template, variables);
+        const engine = new TemplateEngine(template, variables);
+        const parsedTemplate = engine.parse();
       
         expect(parsedTemplate.text).toEqual('This is a template with a food found and another Variable not being found');
         expect(parsedTemplate.containsWarnings()).toBeTruthy();
@@ -64,7 +78,8 @@ describe('The template Engine', () => {
         let variables = new Map<string, string>();
         variables.set('variable', 'food');
 
-        const parsedTemplate =  TemplateEngine.create(template, variables);
+        const engine = new TemplateEngine(template, variables);
+        const parsedTemplate = engine.parse();
       
         expect(parsedTemplate.text).toEqual('Template with food and ${anotherVariable}');
         expect(parsedTemplate.containsWarnings()).toBeTruthy();
@@ -75,7 +90,8 @@ describe('The template Engine', () => {
         const template = '${variable} and ${anotherVariable}';
         let variables = null;
 
-        const parsedTemplate =  TemplateEngine.create(template, variables);
+        const engine = new TemplateEngine(template, variables);
+        const parsedTemplate = engine.parse();
       
         expect(parsedTemplate.text).toEqual('${variable} and ${anotherVariable}');
         expect(parsedTemplate.containsWarnings()).toBeTruthy();
@@ -85,7 +101,8 @@ describe('The template Engine', () => {
         const template = null;
         let variables = new Map<string, string>();
 
-        const parsedTemplate =  TemplateEngine.create(template, variables);
+        const engine = new TemplateEngine(template, variables);
+        const parsedTemplate = engine.parse();
       
         expect(parsedTemplate.text).toBeNull();
         expect(parsedTemplate.containsWarnings()).toBeTruthy();

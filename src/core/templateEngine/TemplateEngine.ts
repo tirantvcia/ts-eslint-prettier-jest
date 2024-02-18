@@ -13,20 +13,19 @@ Edge cases:
 */
 export class TemplateEngine {
 
-    private constructor(private readonly template: string, private readonly variables: Map<string, string>) { }
+    constructor(private readonly template: string, private readonly variables: Map<string, string>){}
+    
+    parse() : TemplateReplaced {
 
-    static create(template: string, variables: Map<string, string>) {
-        if ((TemplateEngine.isNotValidate(template, variables)).length > 0) {
-            const checkedWarnings = TemplateEngine.isNotValidate(template, variables);
-            return new TemplateReplaced(template, checkedWarnings);
+        if((this.isNotValidate()).length > 0) {
+            const checkedWarnings = this.isNotValidate();
+            return new TemplateReplaced(this.template, checkedWarnings );
         }
-
-        return new TemplateEngine(template, variables).parse();
+        const templateReplaced = this.templateWithReplacedVariables();
+        return this.addWarningsAboutNonReplacedVariables(templateReplaced);
 
     }
-
-
-    private parse(): TemplateReplaced {
+    private templateWithReplacedVariables() {
         let warnings: TemplateWarning[] = [];
         let textReplaced = this.template;
         this.variables.forEach((value, key) => {
@@ -37,46 +36,46 @@ export class TemplateEngine {
             }
         });
         const templateReplaced = new TemplateReplaced(textReplaced, warnings);
-        return this.addWarningsAboutNonReplacedVariables(templateReplaced);
+        return templateReplaced;
     }
-    private static isNotValidate(template: string, variables: Map<string, string>) {
-        let warnings: TemplateWarning[] = [];
-        if (TemplateEngine.isVariablesNotValid(variables)) {
-            warnings.push(new TemplateWarning("Variables is not defined"));
 
+    private isNotValidate() {
+        let warnings: TemplateWarning[] = [];
+        if(this.isVariablesNotValid()) {
+            warnings.push(new TemplateWarning("Variables is not defined"));
+            
         }
-        if (TemplateEngine.isTextNotValid(template)) {
+        if(this.isTextNotValid()) {
             warnings.push(new TemplateWarning("Text is not defined"));
         }
         return warnings;
     }
-    private static isVariablesNotValid(variables: Map<string, string>) {
-        return !variables;
+
+    private isTextNotValid() {
+        return !this.template;
     }
 
-    static isTextNotValid(template: string) {
-        return !template;
+    private isVariablesNotValid() {
+        return !this.variables;
     }
 
-
-    private addWarningsAboutNonReplacedVariables(templateReplaced: TemplateReplaced) {
+    private addWarningsAboutNonReplacedVariables(templateReplaced:TemplateReplaced) {
         const textReplaced = templateReplaced.text;
         const warningsAboutNonReplacedVariables: TemplateWarning[] = [];
 
         const regex: RegExp = /\$\{[a-zA-Z0-9-]+\}/g;
         const matches = textReplaced.match(regex);
-        if (!matches) {
+        if(!matches) {
             return templateReplaced;
         }
 
         matches.forEach(match => {
             const variableName = match.substring(2, match.length - 1);
-            const warning = new TemplateWarning("variable " + variableName + " not be replaced");
+            const warning = new TemplateWarning("variable "+ variableName + " not be replaced");
             warningsAboutNonReplacedVariables.push(warning);
-        });
+        })
 
         return templateReplaced.addWarning(warningsAboutNonReplacedVariables);
     }
-
+   
 }
-
