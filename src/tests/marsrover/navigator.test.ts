@@ -2,7 +2,7 @@ export class Coordinates {
     private constructor(private readonly latitude: number, private readonly longitude: number){};
     
     public static create(latitude : number, longitude: number) {
-        if(latitude < 0 || longitude) {
+        if(latitude < 0 || longitude < 0) {
             throw new Error("Values less than Zero not allowed");
         }
         return new Coordinates(latitude, longitude);
