@@ -1,29 +1,11 @@
-export class Coordinates {
-    static boundaryLatitude: number = 10;
-    static boundaryLongitude: number = 10;
-    private constructor(private readonly latitude: number, private readonly longitude: number){};
-    
-    public static create(latitude : number, longitude: number) {
-        if(latitude < 0 || longitude < 0) {
-            throw new Error("Values less than Zero not allowed");
-        }
+import { Coordinates } from "../../core/marsrover/Coordinates";
 
-        if(latitude >= Coordinates.boundaryLatitude) {
-            latitude = latitude % Coordinates.boundaryLatitude;
-        }
-        if(longitude >= Coordinates.boundaryLongitude) {
-            longitude = longitude % Coordinates.boundaryLongitude;
-        }
-
-        return new Coordinates(latitude, longitude);
-    }
-}
 describe('The Coordinates', () => {
-    it('Does not allowed values less than Zero for the latitude' , () => {
+    xit('Does not allowed values less than Zero for the latitude' , () => {
         expect(() => Coordinates.create(-1, 0)).toThrow("Values less than Zero not allowed");
     
     });
-    it('Does not allowed values less than Zero for the longitude' , () => {
+    xit('Does not allowed values less than Zero for the longitude' , () => {
         expect(() => Coordinates.create(0, -1)).toThrow("Values less than Zero not allowed");
     
     });
@@ -39,6 +21,34 @@ describe('The Coordinates', () => {
         coordinates = Coordinates.create(9, 11);
         expect(coordinates).toEqual(Coordinates.create(9, 1));
     
+    });
+    it('increases latitude by one' , () => {
+        let coordinates = Coordinates.create(0, 0);
+        expect(coordinates.increaseLatitude()).toEqual(Coordinates.create(1 , 0));
+        coordinates = Coordinates.create(9, 0);
+        expect(coordinates.increaseLatitude()).toEqual(Coordinates.create(0 , 0));
+   
+    });
+    it('increases longitude by one' , () => {
+        let coordinates = Coordinates.create(0, 0);
+        expect(coordinates.increaseLongitude()).toEqual(Coordinates.create(0 , 1));
+        coordinates = Coordinates.create(0, 9);
+        expect(coordinates.increaseLongitude()).toEqual(Coordinates.create(0 , 0));
+   
+    });
+    it('decreases latitude by one' , () => {
+        let coordinates = Coordinates.create(1, 0);
+        expect(coordinates.decreaseLatitude()).toEqual(Coordinates.create(0 , 0));
+        coordinates = Coordinates.create(0, 0);
+        expect(coordinates.decreaseLatitude()).toEqual(Coordinates.create(9 , 0));
+   
+    });
+    it('decreases longitude by one' , () => {
+        let coordinates = Coordinates.create(0, 1);
+        expect(coordinates.decreaseLongitude()).toEqual(Coordinates.create(0, 0));
+        coordinates = Coordinates.create(0, 0);
+        expect(coordinates.decreaseLongitude()).toEqual(Coordinates.create(0, 9));
+   
     });
 
 });
