@@ -30,5 +30,8 @@ export class Coordinates {
     public decreaseLongitude(): any {
         return Coordinates.create(this.latitude, this.longitude - 1);
     }
+    public toString() {
+        return this.latitude + ':' + this.longitude;
+    }
 
 }

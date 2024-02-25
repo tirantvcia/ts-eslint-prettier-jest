@@ -16,6 +16,10 @@ export class NavigatorFacingNorth {
     toBackward(): any {
         return new NavigatorFacingNorth(this.coordinates.decreaseLongitude());
     }
+    formattedLocation(): any {
+        return this.coordinates.toString() + ':N';
+    }
+
     
 }
 export class NavigatorFacingWest {
@@ -41,12 +45,15 @@ describe('The Navigator', () => {
         });
         it('should have move +1 latitud position when forward' , () => {
             let navigator = new NavigatorFacingNorth(Coordinates.create(0, 0));
+            expect(navigator.formattedLocation()).toEqual('0:0:N');
+            
             expect(navigator.toForward()).toEqual(new NavigatorFacingNorth(Coordinates.create(0, 1)));
             expect(navigator.toForward()).toBeInstanceOf( NavigatorFacingNorth);
             navigator = new NavigatorFacingNorth(Coordinates.create(0, 1));
             expect(navigator.toForward()).toEqual(new NavigatorFacingNorth(Coordinates.create(0, 2)));
             navigator = new NavigatorFacingNorth(Coordinates.create(0, 9));
             expect(navigator.toForward()).toEqual(new NavigatorFacingNorth(Coordinates.create(0, 0)));
+           
         });
         it('should have move -1 latitud position when forward' , () => {
             let navigator = new NavigatorFacingNorth(Coordinates.create(0, 1));
