@@ -33,6 +33,28 @@ export class NavigatorFacingEast {
     
 }
 
+export class NavigatorFacingSouth {
+    constructor(private readonly coordinates: Coordinates){};
+
+    toRight(): any {
+         return new NavigatorFacingWest(this.coordinates);
+    }
+    toLeft(): any {
+        return new NavigatorFacingEast(this.coordinates);
+    }
+    toBackward(): any {
+        return new NavigatorFacingSouth(this.coordinates.increaseLongitude());
+    }
+    toForward(): any {
+        return new NavigatorFacingSouth(this.coordinates.decreaseLongitude());
+    }
+    formattedLocation(): any {
+        return this.coordinates.toString() + ':S';
+    }
+
+    
+}
+
 describe('The Navigator', () => {
     describe('when facing North', () => {
         it('should have West when to left' , () => {
@@ -43,7 +65,7 @@ describe('The Navigator', () => {
             let navigator = new NavigatorFacingNorth(Coordinates.create(0, 0));
             expect(navigator.toRight()).toBeInstanceOf(NavigatorFacingEast);
         });
-        it('should have move +1 latitud position when forward' , () => {
+        it('should have move +1 longitud position when forward' , () => {
             let navigator = new NavigatorFacingNorth(Coordinates.create(0, 0));
             expect(navigator.formattedLocation()).toEqual('0:0:N');
             
@@ -55,7 +77,7 @@ describe('The Navigator', () => {
             expect(navigator.toForward()).toEqual(new NavigatorFacingNorth(Coordinates.create(0, 0)));
            
         });
-        it('should have move -1 latitud position when forward' , () => {
+        it('should have move -1 longitud position when forward' , () => {
             let navigator = new NavigatorFacingNorth(Coordinates.create(0, 1));
             expect(navigator.toBackward()).toEqual(new NavigatorFacingNorth(Coordinates.create(0, 0)));
             navigator = new NavigatorFacingNorth(Coordinates.create(0, 2));
@@ -65,4 +87,31 @@ describe('The Navigator', () => {
         });
 
     });
+    describe('when facing South', () => {
+        it('should have East when to left' , () => {
+            let navigator = new NavigatorFacingSouth(Coordinates.create(0, 0));
+            expect(navigator.toLeft()).toBeInstanceOf(NavigatorFacingEast);
+        });
+        it('should have West when to right' , () => {
+            let navigator = new NavigatorFacingSouth(Coordinates.create(0, 0));
+            expect(navigator.toRight()).toBeInstanceOf(NavigatorFacingWest);
+        });
+        it('should have move decrease longitud position when forward' , () => {
+            const navigator = new NavigatorFacingSouth(Coordinates.create(0, 2));
+            const nextNavigator = navigator.toForward();
+            expect(nextNavigator).toEqual(new NavigatorFacingSouth(Coordinates.create(0, 1)));
+            expect(nextNavigator.formattedLocation()).toEqual('0:1:S');
+           
+        });
+        it('should have increase longitud position when backward' , () => {
+            const navigator = new NavigatorFacingSouth(Coordinates.create(0, 0));
+            const nextNavigator = navigator.toBackward();
+            expect(nextNavigator).toEqual(new NavigatorFacingSouth(Coordinates.create(0, 1)));
+            expect(nextNavigator.formattedLocation()).toEqual('0:1:S');
+
+        });
+
+    });    
+
+    
 });
