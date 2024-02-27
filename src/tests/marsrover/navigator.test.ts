@@ -44,8 +44,22 @@ export class NavigatorFacingWest {
     
 }
 export class NavigatorFacingEast {
-
     constructor(private readonly coordinates: Coordinates){};
+    toBackward() {
+        return new NavigatorFacingEast(this.coordinates.increaseLatitude());
+    }
+    toForward() {
+        return new NavigatorFacingEast(this.coordinates.decreaseLatitude());
+    }
+    toRight(): any {
+        return new NavigatorFacingSouth(this.coordinates);
+    }
+    toLeft(): any {
+        return new NavigatorFacingNorth(this.coordinates);
+    }
+    formattedLocation(): any {
+        return this.coordinates.toString() + ':E';
+    }
     
 }
 
@@ -153,5 +167,29 @@ describe('The Navigator', () => {
 
     });  
 
-    
+    describe('when facing East', () => {
+        it('should have North when to left' , () => {
+            let navigator = new NavigatorFacingEast(Coordinates.create(0, 0));
+            expect(navigator.toLeft()).toBeInstanceOf(NavigatorFacingNorth);
+        });
+        it('should have South when to right' , () => {
+            let navigator = new NavigatorFacingEast(Coordinates.create(0, 0));
+            expect(navigator.toRight()).toBeInstanceOf(NavigatorFacingSouth);
+        });
+        it('should have move decrease latitude position when forward' , () => {
+            const navigator = new NavigatorFacingEast(Coordinates.create(2, 0));
+            const nextNavigator = navigator.toForward();
+            expect(nextNavigator).toEqual(new NavigatorFacingEast(Coordinates.create(1, 0)));
+            expect(nextNavigator.formattedLocation()).toEqual('1:0:E');
+           
+        });
+        it('should have increase latitude position when backward' , () => {
+            const navigator = new NavigatorFacingEast(Coordinates.create(0, 0));
+            const nextNavigator = navigator.toBackward();
+            expect(nextNavigator).toEqual(new NavigatorFacingEast(Coordinates.create(1, 0)));
+            expect(nextNavigator.formattedLocation()).toEqual('1:0:E');
+
+        });
+
+    }); 
 });
