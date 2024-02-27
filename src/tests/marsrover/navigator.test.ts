@@ -23,8 +23,24 @@ export class NavigatorFacingNorth {
     
 }
 export class NavigatorFacingWest {
-
+   
     constructor(private readonly coordinates: Coordinates){};
+    toRight(): NavigatorFacingNorth {
+        return new NavigatorFacingNorth(this.coordinates);
+    }
+    toLeft(): NavigatorFacingSouth {
+        return new NavigatorFacingSouth(this.coordinates);
+    }
+    toForward() {
+        return new NavigatorFacingWest(this.coordinates.increaseLatitude());
+    }
+    toBackward() {
+        return new NavigatorFacingWest(this.coordinates.decreaseLatitude());
+    }
+    formattedLocation(): any {
+        return this.coordinates.toString() + ':W';
+    }
+
     
 }
 export class NavigatorFacingEast {
@@ -111,7 +127,31 @@ describe('The Navigator', () => {
 
         });
 
-    });    
+    });  
+    describe('when facing West', () => {
+        it('should have South when to left' , () => {
+            let navigator = new NavigatorFacingWest(Coordinates.create(0, 0));
+            expect(navigator.toLeft()).toBeInstanceOf(NavigatorFacingSouth);
+        });
+        it('should have North when to right' , () => {
+            let navigator = new NavigatorFacingWest(Coordinates.create(0, 0));
+            expect(navigator.toRight()).toBeInstanceOf(NavigatorFacingNorth);
+        });
+        it('should have increase latitude position when forward' , () => {
+            const navigator = new NavigatorFacingWest(Coordinates.create(0, 0));
+            const nextNavigator = navigator.toForward();
+            expect(nextNavigator).toEqual(new NavigatorFacingWest(Coordinates.create(1, 0)));
+            expect(nextNavigator.formattedLocation()).toEqual('1:0:W');
+           
+        });
+        it('should have decrease longitude position when backward' , () => {
+            const navigator = new NavigatorFacingWest(Coordinates.create(2, 0));
+            const nextNavigator = navigator.toBackward();
+            expect(nextNavigator).toEqual(new NavigatorFacingWest(Coordinates.create(1, 0)));
+            expect(nextNavigator.formattedLocation()).toEqual('1:0:W');
+        });
+
+    });  
 
     
 });
