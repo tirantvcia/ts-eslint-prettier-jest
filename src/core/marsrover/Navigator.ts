@@ -1,6 +1,6 @@
 import { Coordinates } from "./Coordinates";
 
-type Navigator = NavigatorFacingNorth | NavigatorFacingSouth | NavigatorFacingEast | NavigatorFacingWest;
+export type Navigator = NavigatorFacingNorth | NavigatorFacingSouth | NavigatorFacingEast | NavigatorFacingWest;
 
 export class NavigatorFacingNorth {
 
