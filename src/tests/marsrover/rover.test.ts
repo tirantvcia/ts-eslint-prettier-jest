@@ -9,9 +9,18 @@ enum Command  {
     Backward = 'toBackward'
 }
 export class Rover {
-    formattedLocation(): any {
-        return this.navigator.formattedLocation();
+
+
+    constructor(private navigator: Navigator) { }
+    run(command: string): any {
+        this.ensureValidCommand(command);
     }
+    private ensureValidCommand(command: string) {
+        if (!command.match(/^[LRFB]+$/)) {
+            throw new Error('Invalid command');
+        }
+    }
+
     runCommands(commands: Command[]) {
         commands.forEach(command => {
             if (command === Command.Left) {
@@ -26,11 +35,24 @@ export class Rover {
         }
         )
     }
-    constructor(private navigator: Navigator) { }
+    formattedLocation(): any {
+        return this.navigator.formattedLocation();
+    }
 
 }
 
 describe('The Mars Rover', () => {
+    it('does not allow given invalid run commands', () => {
+        const coordinates: Coordinates = Coordinates.create(0, 0);
+        const navigator: Navigator = new NavigatorFacingNorth(coordinates);
+        const rover: Rover = new Rover(navigator);
+
+        expect(()=>rover.run('A')).toThrow('Invalid command');
+        expect(()=>rover.run('')).toThrow('Invalid command');
+       // expect(()=>rover.run(null)).toThrow('Invalid command');
+    }
+
+    );
     it('executes a given single left command', () => {
         const coordinates: Coordinates = Coordinates.create(0, 0);
         const navigator: NavigatorFacingNorth = new NavigatorFacingNorth(coordinates);
