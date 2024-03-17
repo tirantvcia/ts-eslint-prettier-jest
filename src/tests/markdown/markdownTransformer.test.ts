@@ -13,6 +13,12 @@ import { Url } from "url";
 
 export class MarkDownLink {
     constructor(readonly text: string, readonly url: string) {}
+    public isEqual(other: MarkDownLink) {
+        if(other == null) {
+            return false;
+        }
+        return this.text === other.text && this.url === other.url;
+    }
 }
 
 export class TransformationMarkdownProcess {
@@ -47,11 +53,17 @@ export class TransformationMarkdownProcess {
                 return allLinks;
             }
 
-        
-            allLinks.push(new MarkDownLink(
+            const newMarkDownLink = new MarkDownLink(
                 this.markdownText.substring(firstTextPosition, lastTextPosition),
                 this.markdownText.substring(firstUrlPosition, lastUrlPosition)
-            ))
+            );
+
+            const markDownIsPresent = this.checkMarkDownIsPresent(allLinks, newMarkDownLink);
+
+            if(markDownIsPresent) {
+                allLinks.push(newMarkDownLink);
+            }
+
 
             position = lastUrlPosition;
 
@@ -61,6 +73,11 @@ export class TransformationMarkdownProcess {
         return allLinks;
     }
 
+
+    private checkMarkDownIsPresent(allLinks: MarkDownLink[], newMarkDownLink: MarkDownLink) {
+        const indexOf = allLinks.findIndex((markdownLink) => markdownLink.isEqual(newMarkDownLink));
+        return indexOf === -1;
+    }
 }
 
 describe('The Markdown Transformer', ()=> {
@@ -103,6 +120,16 @@ describe('Find All links', ()=> {
         expect(allLinks).toEqual([
             new MarkDownLink('visible first text link', 'url1'),
             new MarkDownLink('visible second text link', 'url2')
+        ]);
+
+    })
+
+    it('find one link in a given markdown text that contains duplicated links', () => {
+        const markdownText = '[visible first text link](url1) and [visible first text link](url1)';
+        const process:TransformationMarkdownProcess = new TransformationMarkdownProcess(markdownText);
+        const allLinks = process.findAllLinks();
+        expect(allLinks).toEqual([
+            new MarkDownLink('visible first text link', 'url1')
         ]);
 
     })
