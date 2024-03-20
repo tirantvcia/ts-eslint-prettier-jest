@@ -24,9 +24,11 @@ export class MarkDownLink {
 export class TransformationMarkdownProcess {
 
     constructor(readonly markdownText:string){}
+
     transform() {
         return this.markdownText;
     }
+
     findAllLinks(): MarkDownLink[] {
 
         let allLinks:MarkDownLink[] = [];
@@ -78,6 +80,15 @@ export class TransformationMarkdownProcess {
         const indexOf = allLinks.findIndex((markdownLink) => markdownLink.isEqual(newMarkDownLink));
         return indexOf === -1;
     }
+
+    generateLinksRecord(markdownLinks: MarkDownLink[]): Record<string, MarkDownLink> {
+        return markdownLinks.reduce((previous, current, index) => ({
+            ...previous,
+            [`[^anchor${index + 1}]`]: current
+        }),
+            {} as Record<string, MarkDownLink>);
+    }
+
 }
 
 describe('The Markdown Transformer', ()=> {
@@ -133,4 +144,19 @@ describe('Find All links', ()=> {
         ]);
 
     })
+})
+
+describe('Generate links record', ()=> {
+    it('generates a record for a given links', () => {
+        const aMarkdownLink = new MarkDownLink('visible text link', 'url');
+        const otherMarkdownLink = new MarkDownLink('other visible text link', 'other url');
+
+        const linksRecord = new TransformationMarkdownProcess('irrelevant').generateLinksRecord([aMarkdownLink, otherMarkdownLink]);
+
+        expect(linksRecord).toEqual({
+            ['[^anchor1]']: aMarkdownLink,
+            ['[^anchor2]']: otherMarkdownLink
+        })
+    })
+    
 })
