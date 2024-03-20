@@ -58,9 +58,9 @@ export class TransformationMarkdownProcess {
                 this.markdownText.substring(firstUrlPosition, lastUrlPosition)
             );
 
-            const markDownIsPresent = this.checkMarkDownIsPresent(allLinks, newMarkDownLink);
+            const markDownIsNotPresent = this.checkMarkDownIsNotPresent(allLinks, newMarkDownLink);
 
-            if(markDownIsPresent) {
+            if(markDownIsNotPresent) {
                 allLinks.push(newMarkDownLink);
             }
 
@@ -74,7 +74,7 @@ export class TransformationMarkdownProcess {
     }
 
 
-    private checkMarkDownIsPresent(allLinks: MarkDownLink[], newMarkDownLink: MarkDownLink) {
+    private checkMarkDownIsNotPresent(allLinks: MarkDownLink[], newMarkDownLink: MarkDownLink) {
         const indexOf = allLinks.findIndex((markdownLink) => markdownLink.isEqual(newMarkDownLink));
         return indexOf === -1;
     }
