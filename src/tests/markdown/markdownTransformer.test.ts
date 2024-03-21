@@ -1,8 +1,8 @@
 /**
  * Pasos para transformar el texto markdown
- * - Buscar todos los links en el texto
- * - Evitar los links duplicados
- * - Almacenar los links en algún tipo de almacén
+ * + Buscar todos los links en el texto
+ * + Evitar los links duplicados
+ * + Almacenar los links en algún tipo de almacén
  * - Transformar los links al formato achor
  * - Reemplazar los links almacenados en el texto
  * - Crear las notas al pie
@@ -12,6 +12,9 @@
 import { Url } from "url";
 
 export class MarkDownLink {
+    toAnchorFormat() {
+        return `[${this.text}](${this.url})`
+    }
     constructor(readonly text: string, readonly url: string) {}
     public isEqual(other: MarkDownLink) {
         if(other == null) {
@@ -22,6 +25,11 @@ export class MarkDownLink {
 }
 
 export class TransformationMarkdownProcess {
+    replaceLinksByAnchors(linksRecord: Record<string, MarkDownLink>) {
+        return Object.keys(linksRecord).reduce((previousText, key) => {
+            return previousText.replaceAll(linksRecord[key].toAnchorFormat(), `${linksRecord[key].text} ${key}`)
+        } , this.markdownText)
+    }
 
     constructor(readonly markdownText:string){}
 
@@ -108,7 +116,7 @@ describe('The Markdown Transformer', ()=> {
         expect(transformedText).toBe(expectedTransformedText);
     })
 })
-describe('Find All links', ()=> {
+describe('Auxiliar Tests', ()=> {
     it('does not find links in a given markdown text that does not contain anyone', () => {
         const markdownText = 'text without link';
         const process:TransformationMarkdownProcess = new TransformationMarkdownProcess(markdownText);
@@ -144,9 +152,7 @@ describe('Find All links', ()=> {
         ]);
 
     })
-})
 
-describe('Generate links record', ()=> {
     it('generates a record for a given links', () => {
         const aMarkdownLink = new MarkDownLink('visible text link', 'url');
         const otherMarkdownLink = new MarkDownLink('other visible text link', 'other url');
@@ -158,5 +164,14 @@ describe('Generate links record', ()=> {
             ['[^anchor2]']: otherMarkdownLink
         })
     })
-    
+    it('replaces text links by anchors', () => {
+        const markdownText = '[visible text link](url)'; 
+        const process:TransformationMarkdownProcess = new TransformationMarkdownProcess(markdownText);
+        const allLinks = process.findAllLinks();
+        const linksRecord = process.generateLinksRecord(allLinks);
+        const transformedMarkDown = process.replaceLinksByAnchors(linksRecord);
+
+        expect(transformedMarkDown).toBe('visible text link [^anchor1]');
+    })
 })
+
