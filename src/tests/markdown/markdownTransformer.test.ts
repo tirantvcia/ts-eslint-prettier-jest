@@ -3,8 +3,8 @@
  * + Buscar todos los links en el texto
  * + Evitar los links duplicados
  * + Almacenar los links en algún tipo de almacén
- * - Transformar los links al formato achor
- * - Reemplazar los links almacenados en el texto
+ * + Transformar los links al formato achor
+ * + Reemplazar los links almacenados en el texto
  * - Crear las notas al pie
  * - Añadir las notas al pie
  */
@@ -25,11 +25,7 @@ export class MarkDownLink {
 }
 
 export class TransformationMarkdownProcess {
-    replaceLinksByAnchors(linksRecord: Record<string, MarkDownLink>) {
-        return Object.keys(linksRecord).reduce((previousText, key) => {
-            return previousText.replaceAll(linksRecord[key].toAnchorFormat(), `${linksRecord[key].text} ${key}`)
-        } , this.markdownText)
-    }
+
 
     constructor(readonly markdownText:string){}
 
@@ -95,6 +91,12 @@ export class TransformationMarkdownProcess {
             [`[^anchor${index + 1}]`]: current
         }),
             {} as Record<string, MarkDownLink>);
+    }
+
+    replaceLinksByAnchors(linksRecord: Record<string, MarkDownLink>) {
+        return Object.keys(linksRecord).reduce((previousText, key) => {
+            return previousText.replaceAll(linksRecord[key].toAnchorFormat(), `${linksRecord[key].text} ${key}`)
+        } , this.markdownText)
     }
 
 }
