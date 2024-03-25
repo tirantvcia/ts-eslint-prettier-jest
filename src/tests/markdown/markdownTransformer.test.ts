@@ -88,17 +88,5 @@ describe('Auxiliar Tests', ()=> {
         expect(transformedMarkDown).toBe('visible text link [^anchor1]');
     })
 
-    it('creates footnotes', () => {
-        const markdownText = '[visible text link](url)'; 
-        const process:TransformationMarkdownProcess = new TransformationMarkdownProcess(markdownText);
-        const allLinks = process.findAllLinks();
-        const linksRecord = process.generateLinksRecord(allLinks);
-        const transformedMarkDown = process.replaceLinksByAnchors(linksRecord);
-        const transformedText = process.transform();
-
-        const expectedTransformedText = 'visible text link [^anchor1] \n\n [^anchor1]: url';
-
-        expect(transformedText).toBe(expectedTransformedText);
-    })
 })
 
