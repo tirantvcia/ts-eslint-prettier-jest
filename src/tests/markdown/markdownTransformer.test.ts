@@ -88,5 +88,30 @@ describe('Auxiliar Tests', ()=> {
         expect(transformedMarkDown).toBe('visible text link [^anchor1]');
     })
 
+    it('creates footnotes', () => {
+        const markdownText = '[visible text link](url)'; 
+        const process:TransformationMarkdownProcess = new TransformationMarkdownProcess(markdownText);
+        const allLinks = process.findAllLinks();
+        const linksRecord = process.generateLinksRecord(allLinks);
+        const footnotes = process.generatesFootnotes(linksRecord);
+
+        expect(footnotes).toEqual(['[^anchor1]: url']);
+    })
+
+    it('appends footnotes to markdown', () => {
+        const markdownText = '[visible text link](url)'; 
+        const process:TransformationMarkdownProcess = new TransformationMarkdownProcess(markdownText);
+        const allLinks = process.findAllLinks();
+        const linksRecord = process.generateLinksRecord(allLinks);
+        const footnotes = process.generatesFootnotes(linksRecord);
+        const transformedMarkDown = process.replaceLinksByAnchors(linksRecord);
+        const transformedMarkDownWithFootnotes = process.appendFootnotesToMarkdown(transformedMarkDown, footnotes);
+       
+
+        const expectedTransformedMarkDownWithFootnotes = 'visible text link [^anchor1] \n\n [^anchor1]: url';
+        
+        expect(transformedMarkDownWithFootnotes).toEqual(expectedTransformedMarkDownWithFootnotes);
+    })
+
 })
 

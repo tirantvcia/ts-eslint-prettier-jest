@@ -3,7 +3,6 @@ import { MarkDownLink } from "./MarkDownLink";
 
 export class TransformationMarkdownProcess {
 
-
     constructor(readonly markdownText: string) { }
 
     transform() {
@@ -76,6 +75,24 @@ export class TransformationMarkdownProcess {
         return Object.keys(linksRecord).reduce((previousText, key) => {
             return previousText.replaceAll(linksRecord[key].toAnchorFormat(), `${linksRecord[key].text} ${key}`);
         }, this.markdownText);
+    }
+
+    generatesFootnotes(linksRecord: Record<string, MarkDownLink>) {
+        return Object.keys(linksRecord).map((footNoteKey) => 
+           `${footNoteKey}: ${linksRecord[footNoteKey].url}`
+        );
+    }
+
+    appendFootnotesToMarkdown(transformedMarkDown: string, footnotes: string[]) {
+       let markdownWithFootnotes = transformedMarkDown.concat(' \n\n ');
+       footnotes.forEach(footnote => 
+            markdownWithFootnotes = markdownWithFootnotes.concat(footnote)
+        )
+
+        return markdownWithFootnotes;
+
+       
+        
     }
 
 }

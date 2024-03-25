@@ -1,5 +1,8 @@
 
 export class MarkDownLink {
+    toFoodNoteFormat(): string | RegExp {
+        throw new Error("Method not implemented.");
+    }
 
     constructor(readonly text: string, readonly url: string) { }
     public isEqual(other: MarkDownLink) {
