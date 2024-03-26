@@ -6,10 +6,18 @@ export class TransformationMarkdownProcess {
     constructor(readonly markdownText: string) { }
 
     transform() {
-        return this.markdownText;
+        const allLinks = this.findAllLinks();
+        if(allLinks.length == 0) {
+            return this.markdownText;
+        }
+
+        const linksRecord = this.generateLinksRecord(allLinks);
+        const footnotes = this.generatesFootnotes(linksRecord);
+        const transformedMarkDown = this.replaceLinksByAnchors(linksRecord);
+        return this.appendFootnotesToMarkdown(transformedMarkDown, footnotes);
     }
 
-    findAllLinks(): MarkDownLink[] {
+    private findAllLinks(): MarkDownLink[] {
 
         let allLinks: MarkDownLink[] = [];
         let position = 0;
@@ -63,7 +71,7 @@ export class TransformationMarkdownProcess {
         return indexOf === -1;
     }
 
-    generateLinksRecord(markdownLinks: MarkDownLink[]): Record<string, MarkDownLink> {
+    private generateLinksRecord(markdownLinks: MarkDownLink[]): Record<string, MarkDownLink> {
         return markdownLinks.reduce((previous, current, index) => ({
             ...previous,
             [`[^anchor${index + 1}]`]: current
@@ -71,19 +79,19 @@ export class TransformationMarkdownProcess {
             {} as Record<string, MarkDownLink>);
     }
 
-    replaceLinksByAnchors(linksRecord: Record<string, MarkDownLink>) {
+    private replaceLinksByAnchors(linksRecord: Record<string, MarkDownLink>) {
         return Object.keys(linksRecord).reduce((previousText, key) => {
             return previousText.replaceAll(linksRecord[key].toAnchorFormat(), `${linksRecord[key].text} ${key}`);
         }, this.markdownText);
     }
 
-    generatesFootnotes(linksRecord: Record<string, MarkDownLink>) {
+    private generatesFootnotes(linksRecord: Record<string, MarkDownLink>) {
         return Object.keys(linksRecord).map((footNoteKey) => 
            `${footNoteKey}: ${linksRecord[footNoteKey].url}`
         );
     }
 
-    appendFootnotesToMarkdown(transformedMarkDown: string, footnotes: string[]) {
+    private appendFootnotesToMarkdown(transformedMarkDown: string, footnotes: string[]) {
        let markdownWithFootnotes = transformedMarkDown.concat(' \n\n ');
        let footnotesText:string = '';
        footnotes.forEach(footnote => {
