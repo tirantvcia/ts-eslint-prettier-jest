@@ -85,11 +85,15 @@ export class TransformationMarkdownProcess {
 
     appendFootnotesToMarkdown(transformedMarkDown: string, footnotes: string[]) {
        let markdownWithFootnotes = transformedMarkDown.concat(' \n\n ');
-       footnotes.forEach(footnote => 
-            markdownWithFootnotes = markdownWithFootnotes.concat(footnote)
-        )
+       let footnotesText:string = '';
+       footnotes.forEach(footnote => {
+            if(footnotesText.length > 0) {
+                footnotesText = footnotesText.concat(' \n ');
+            } 
+            footnotesText = footnotesText.concat(footnote);
+        })
 
-        return markdownWithFootnotes;
+        return markdownWithFootnotes.concat(footnotesText);
 
        
         

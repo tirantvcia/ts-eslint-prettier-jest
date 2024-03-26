@@ -113,5 +113,21 @@ describe('Auxiliar Tests', ()=> {
         expect(transformedMarkDownWithFootnotes).toEqual(expectedTransformedMarkDownWithFootnotes);
     })
 
+    it('appends several footnotes to markdown', () => {
+        const markdownText = '[visible first text link](url1) and [visible second text link](url2)';
+        const process:TransformationMarkdownProcess = new TransformationMarkdownProcess(markdownText);
+        const allLinks = process.findAllLinks();
+        const linksRecord = process.generateLinksRecord(allLinks);
+        const footnotes = process.generatesFootnotes(linksRecord);
+        const transformedMarkDown = process.replaceLinksByAnchors(linksRecord);
+        const transformedMarkDownWithFootnotes = process.appendFootnotesToMarkdown(transformedMarkDown, footnotes);
+       
+
+        const expectedTransformedMarkDownWithFootnotes = 'visible first text link [^anchor1] and visible second text link [^anchor2] \n\n ' +
+                                                          '[^anchor1]: url1 \n [^anchor2]: url2';
+        
+        expect(transformedMarkDownWithFootnotes).toEqual(expectedTransformedMarkDownWithFootnotes);
+    })
+
 })
 
